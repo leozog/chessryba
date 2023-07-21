@@ -1,5 +1,6 @@
 #include "piece.h"
 #include "board.h"
+#include "output.h"
 #include "pieces/king.h"
 #include "pieces/queen.h"
 #include "pieces/rook.h"
@@ -7,12 +8,13 @@
 #include "pieces/knight.h"
 #include "pieces/pawn.h"
 
+#include "array2d.h"
+
 #include <vector>
-#include <iostream>
 
 int main()
 {
-    const King king_b(0);
+    /*const King king_b(0);
     const King king_w(1);
     const Queen queen_b(0);
     const Queen queen_w(1);
@@ -39,8 +41,11 @@ int main()
     }
     catch (char const *s)
     {
-        std::cout << s << std::endl;
-    }
+        Output::print(s);
+    }*/
+
+    array2d<int, 4, 4> arr;
+    output::print(arr.h);
 
     return 0;
 }

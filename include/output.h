@@ -1,10 +1,16 @@
 #pragma once
 #include <iostream>
 
-class Output
+class output
 {
 public:
-    static void print(char c);
-    static void print(std::string s);
-    static void endl();
+    template <typename T>
+    static void print(T x)
+    {
+        std::cout << x;
+    }
+    static void endl()
+    {
+        std::cout << '\n';
+    }
 };

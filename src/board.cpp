@@ -84,45 +84,45 @@ void Board::move_piece(int8_t x1, int8_t y1, int8_t x2, int8_t y2)
 void Board::print() const
 {
     for (int i = 0; i < H / 10 + 1; i++)
-        Output::print(' ');
-    Output::print("+");
+        output::print(' ');
+    output::print("+");
     for (int i = 0; i < W; i++)
-        Output::print('-');
-    Output::print("+");
-    Output::endl();
+        output::print('-');
+    output::print("+");
+    output::endl();
 
     for (int y = 0; y < H; y++)
     {
-        Output::print(std::to_string(H - y));
+        output::print(std::to_string(H - y));
         for (int i = 0; i < y / 10; i++)
-            Output::print(' ');
-        Output::print('|');
+            output::print(' ');
+        output::print('|');
 
         for (int x = 0; x < W; x++)
         {
             const Piece *p = get_piece(x, y);
             if (p != nullptr)
-                Output::print(p->get_look());
+                output::print(p->get_look());
             else
             {
                 if (x % 2 == y % 2)
-                    Output::print('#');
+                    output::print('#');
                 else
-                    Output::print(' ');
+                    output::print(' ');
             }
         }
 
-        Output::print('|');
-        Output::endl();
+        output::print('|');
+        output::endl();
     }
 
-    Output::print(" +");
+    output::print(" +");
     for (int i = 0; i < W; i++)
-        Output::print('-');
-    Output::print("+");
-    Output::endl();
-    Output::print("  ");
+        output::print('-');
+    output::print("+");
+    output::endl();
+    output::print("  ");
     for (int i = 0; i < W; i++)
-        Output::print('a' + i);
-    Output::endl();
+        output::print('a' + i);
+    output::endl();
 }
