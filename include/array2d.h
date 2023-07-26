@@ -13,4 +13,44 @@ public:
     static constexpr size_t h = H;
     T &operator()(size_t x, size_t y);
     void for_each(std::function<void(T &)> f);
+    void for_each(std::function<void(T &, size_t)> f);
+    void for_each(std::function<void(T &, size_t, size_t)> f);
 };
+
+#ifdef _DEBUG
+template <typename T, size_t W, size_t H>
+T &array2d<T, W, H>::operator()(size_t x, size_t y)
+{
+    return arr.at(x + y * W);
+}
+#else
+template <typename T, size_t W, size_t H>
+T &array2d<T, W, H>::operator()(size_t x, size_t y)
+{
+    return arr[x + y * W];
+}
+#endif
+
+template <typename T, size_t W, size_t H>
+void array2d<T, W, H>::for_each(std::function<void(T &)> f)
+{
+    for (auto &a : arr)
+        f(a);
+}
+
+template <typename T, size_t W, size_t H>
+void array2d<T, W, H>::for_each(std::function<void(T &, size_t)> f)
+{
+    for (size_t i = 0; i < W * H; i++)
+        f(arr[i], i);
+}
+
+template <typename T, size_t W, size_t H>
+void array2d<T, W, H>::for_each(std::function<void(T &, size_t, size_t)> f)
+{
+    for (size_t i = 0; i < H; i++)
+    {
+        for (size_t j = 0; j < W; j++)
+            f(arr[j + i * W], j, i);
+    }
+}

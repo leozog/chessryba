@@ -12,6 +12,24 @@
 
 #include <vector>
 
+#include "hashset.h"
+
+struct hash_i
+{
+    std::size_t operator()(int const &i) const noexcept
+    {
+        return i;
+    }
+};
+
+struct cmp_i
+{
+    constexpr bool operator()(const int &lhs, const int &rhs) const
+    {
+        return lhs == rhs;
+    }
+};
+
 int main()
 {
     /*const King king_b(0);
@@ -44,8 +62,49 @@ int main()
         Output::print(s);
     }*/
 
-    array2d<int, 4, 4> arr;
-    output::print(arr.h);
+    // array2d<int, 4, 4> arr;
+    // arr(1, 1) = 0;
+
+    hashset<int, hash_i, cmp_i> hs(10);
+    {
+        auto p = hs.insert(5);
+
+        output::print(*(p.first));
+        output::endl();
+        output::print(p.second);
+        output::endl();
+        output::endl();
+    }
+
+    {
+        auto p = hs.insert(4);
+
+        output::print(*(p.first));
+        output::endl();
+        output::print(p.second);
+        output::endl();
+        output::endl();
+    }
+
+    {
+        auto p = hs.insert(5);
+
+        output::print(*(p.first));
+        output::endl();
+        output::print(p.second);
+        output::endl();
+        output::endl();
+    }
+
+    {
+        auto p = hs.insert(15);
+
+        output::print(*(p.first));
+        output::endl();
+        output::print(p.second);
+        output::endl();
+        output::endl();
+    }
 
     return 0;
 }
