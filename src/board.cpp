@@ -5,74 +5,24 @@
 #include <array>
 
 Board::Board(){};
-Board::Board(const std::vector<const Piece *> &pieces, const std::string &code) { load_code(code, pieces); };
+Board::Board(const std::vector<const Piece *> &pieces, const std::string &code) { load_code(pieces, code); };
 
-void Board::load_code(const std::string &code, const std::vector<const Piece *> &pieces)
+void Board::evaluate()
 {
-    int state = 0;
-    int x = 0, y = 0;
-    for (char c : code)
-    {
-
-        if (c == ' ')
-            state++;
-        if (state == 0)
-        {
-            if (x > W)
-                throw "FEN load error 1";
-            if (y >= H)
-                throw "FEN load error 2";
-            if (c == '/')
-            {
-                x = 0;
-                y++;
-            }
-            else if (c >= '1' && c <= '9')
-            {
-                for (int i = 0; i < c - '0'; i++, x++)
-                    set_piece(x, y, nullptr);
-            }
-            else
-            {
-                for (const Piece *p : pieces)
-                {
-                    if ((char)c == p->get_code())
-                    {
-                        set_piece(x, y, p);
-                        x++;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-}
-
-void Board::claculate()
-{
-    for (auto p : A)
+    for (auto p : arr)
     {
         p->calculate(*this);
     }
 }
 
-bool Board::is_in(int8_t x, int8_t y) const
-{
-    if (x < 0 || x >= W)
-        return false;
-    if (y < 0 || y >= H)
-        return false;
-    return true;
-}
-
 const Piece *Board::get_piece(int8_t x, int8_t y) const
 {
-    return A[y * W + x];
+    return arr[y * W + x];
 }
 
 void Board::set_piece(int8_t x, int8_t y, const Piece *piece)
 {
-    A[y * W + x] = piece;
+    arr[y * W + x] = piece;
 }
 
 void Board::move_piece(int8_t x1, int8_t y1, int8_t x2, int8_t y2)
@@ -125,4 +75,45 @@ void Board::print() const
     for (int i = 0; i < W; i++)
         output::print('a' + i);
     output::endl();
+}
+
+void Board::load_code(const std::vector<const Piece *> &pieces, const std::string &code)
+{
+    int state = 0;
+    int x = 0, y = 0;
+    for (char c : code)
+    {
+
+        if (c == ' ')
+            state++;
+        if (state == 0)
+        {
+            if (x > W)
+                throw "FEN load error 1";
+            if (y >= H)
+                throw "FEN load error 2";
+            if (c == '/')
+            {
+                x = 0;
+                y++;
+            }
+            else if (c >= '1' && c <= '9')
+            {
+                for (int i = 0; i < c - '0'; i++, x++)
+                    set_piece(x, y, nullptr);
+            }
+            else
+            {
+                for (const Piece *p : pieces)
+                {
+                    if ((char)c == p->get_code())
+                    {
+                        set_piece(x, y, p);
+                        x++;
+                        break;
+                    }
+                }
+            }
+        }
+    }
 }

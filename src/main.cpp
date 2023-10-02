@@ -11,6 +11,7 @@
 #include "array2d.h"
 
 #include <vector>
+#include <string>
 
 #include "hashset.h"
 
@@ -64,44 +65,65 @@ int main()
 
     // array2d<int, 4, 4> arr;
     // arr(1, 1) = 0;
-
     hashset<int, hash_i, cmp_i> hs(10);
+    std::vector<std::pair<std::shared_ptr<typename hashset<int, hash_i, cmp_i>::node>, bool>> p(4);
     {
-        auto p = hs.insert(5);
-
-        output::print(*(p.first));
+        p.push_back(hs.get_node(5));
+        output::print(p.back().first->key);
         output::endl();
-        output::print(p.second);
+        output::print(p.back().second);
         output::endl();
         output::endl();
     }
 
     {
-        auto p = hs.insert(4);
-
-        output::print(*(p.first));
+        p.push_back(hs.get_node(4));
+        output::print(p.back().first->key);
         output::endl();
-        output::print(p.second);
-        output::endl();
-        output::endl();
-    }
-
-    {
-        auto p = hs.insert(5);
-
-        output::print(*(p.first));
-        output::endl();
-        output::print(p.second);
+        output::print(p.back().second);
         output::endl();
         output::endl();
     }
 
     {
-        auto p = hs.insert(15);
-
-        output::print(*(p.first));
+        p.push_back(hs.get_node(5));
+        output::print(p.back().first->key);
         output::endl();
-        output::print(p.second);
+        output::print(p.back().second);
+        output::endl();
+        output::endl();
+    }
+
+    {
+        p.push_back(hs.get_node(15));
+        output::print(p.back().first->key);
+        output::endl();
+        output::print(p.back().second);
+        output::endl();
+        output::endl();
+    }
+    p.clear();
+    {
+        p.push_back(hs.get_node(5));
+        output::print(p.back().first->key);
+        output::endl();
+        output::print(p.back().second);
+        output::endl();
+        output::endl();
+    }
+    {
+        p.push_back(hs.get_node(5));
+        output::print(p.back().first->key);
+        output::endl();
+        output::print(p.back().second);
+        output::endl();
+        output::endl();
+    }
+    {
+        p.push_back(hs.get_node(10));
+        output::print(p.back().first->key);
+        output::endl();
+        output::print(p.back().second);
         output::endl();
         output::endl();
     }

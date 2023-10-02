@@ -6,46 +6,51 @@
 template <typename Key, class Hash, class KeyEqual>
 class hashset
 {
-private:
+public:
     struct node
     {
         size_t hash;
         Key key;
 
-        node(size_t hash, Key key) : hash{hash}, key{key} {}
+        std::list<std::weak_ptr<hashset::node>> &bucket_ref;
+        typename std::list<std::weak_ptr<hashset::node>>::iterator bucket_iter;
 
-        bool operator==(const node &other);
+        node(std::list<std::weak_ptr<hashset::node>> &bucket, size_t hash, Key key);
+        ~node();
+
+        bool compare(size_t hash, Key key);
     };
 
-    std::vector<std::list<hashset::node>> buckets;
+private:
+    std::vector<std::list<std::weak_ptr<hashset::node>>> buckets;
 
 public:
-    struct iterator
-    {
-    private:
-        typename std::list<hashset::node>::iterator ptr;
-        std::list<hashset::node> &list_ref;
-
-    public:
-        iterator(typename std::list<hashset::node>::iterator ptr, std::list<hashset::node> &list_ref) : ptr{ptr}, list_ref{list_ref} {}
-
-        Key &operator*() const { return ptr->key; }
-        Key *operator->() { return &(ptr->key); }
-        void erase() { list_ref.erase(ptr); }
-    };
-
     hashset(size_t n_of_buckets);
-    std::pair<hashset::iterator, bool> insert(const Key x);
+    std::pair<std::shared_ptr<node>, bool> get_node(const Key x);
 };
 
+// hashset::node
 template <typename Key, class Hash, class KeyEqual>
-bool hashset<Key, Hash, KeyEqual>::node::operator==(const node &other)
+hashset<Key, Hash, KeyEqual>::node::node(std::list<std::weak_ptr<node>> &bucket, size_t hash, Key key) : bucket_ref{bucket}, bucket_iter{bucket.insert(bucket.end(), std::weak_ptr<node>())}, hash{hash}, key{key}
 {
-    if (hash != other.hash)
-        return false;
-    return KeyEqual{}(key, other.key);
 }
 
+template <typename Key, class Hash, class KeyEqual>
+hashset<Key, Hash, KeyEqual>::node::~node()
+{
+    bucket_ref.erase(bucket_iter);
+}
+
+template <typename Key, class Hash, class KeyEqual>
+bool hashset<Key, Hash, KeyEqual>::node::compare(size_t hash, Key key)
+{
+    if (this->hash != hash)
+        return false;
+    return KeyEqual{}(this->key, key);
+}
+// hashset::node
+
+// hashset
 template <typename Key, class Hash, class KeyEqual>
 hashset<Key, Hash, KeyEqual>::hashset(size_t n_of_buckets)
 {
@@ -53,16 +58,18 @@ hashset<Key, Hash, KeyEqual>::hashset(size_t n_of_buckets)
 }
 
 template <typename Key, class Hash, class KeyEqual>
-std::pair<typename hashset<Key, Hash, KeyEqual>::iterator, bool> hashset<Key, Hash, KeyEqual>::insert(const Key x)
+std::pair<std::shared_ptr<typename hashset<Key, Hash, KeyEqual>::node>, bool> hashset<Key, Hash, KeyEqual>::get_node(const Key x)
 {
     size_t hash = Hash{}(x);
-    std::list<hashset::node> &bucket = buckets[hash % buckets.size()];
-    hashset::node n(hash, x);
+    std::list<std::weak_ptr<hashset::node>> &bucket = buckets[hash % buckets.size()];
 
-    for (typename std::list<hashset::node>::iterator it = bucket.begin(); it != bucket.end(); ++it)
+    for (typename std::list<std::weak_ptr<hashset::node>>::iterator it = bucket.begin(); it != bucket.end(); ++it)
     {
-        if (n == *it)
-            return std::make_pair(typename hashset<Key, Hash, KeyEqual>::iterator(it, bucket), false);
+        if (it->lock()->compare(hash, x))
+            return std::make_pair(it->lock(), false);
     }
-    return std::make_pair(typename hashset<Key, Hash, KeyEqual>::iterator(bucket.insert(bucket.end(), n), bucket), true);
+    std::shared_ptr<hashset::node> n = std::make_shared<hashset::node>(bucket, hash, x);
+    bucket.back() = n;
+    return std::make_pair(n, true);
 }
+// hashset

@@ -15,6 +15,7 @@ public:
     void for_each(std::function<void(T &)> f);
     void for_each(std::function<void(T &, size_t)> f);
     void for_each(std::function<void(T &, size_t, size_t)> f);
+    bool is_in(int8_t x, int8_t y) const;
 };
 
 #ifdef _DEBUG
@@ -53,4 +54,14 @@ void array2d<T, W, H>::for_each(std::function<void(T &, size_t, size_t)> f)
         for (size_t j = 0; j < W; j++)
             f(arr[j + i * W], j, i);
     }
+}
+
+template <typename T, size_t W, size_t H>
+bool array2d<T, W, H>::is_in(int8_t x, int8_t y) const
+{
+    if (x < 0 || x >= W)
+        return false;
+    if (y < 0 || y >= H)
+        return false;
+    return true;
 }
