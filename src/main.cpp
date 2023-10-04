@@ -14,6 +14,8 @@
 #include <string>
 
 #include "hashset.h"
+#include "bush.h"
+#include "game.h"
 
 struct hash_i
 {
@@ -30,6 +32,34 @@ struct cmp_i
         return lhs == rhs;
     }
 };
+
+class box
+{
+    static int id_ctr;
+
+public:
+    const int id;
+    box() : id{id_ctr++}
+    {
+
+        output::print("new box " + std::to_string(id));
+        output::endl();
+    }
+
+    ~box()
+    {
+        output::print("del box " + std::to_string(id));
+        output::endl();
+    }
+
+    void sing()
+    {
+        output::print("AAA box " + std::to_string(id));
+        output::endl();
+    }
+};
+
+int box::id_ctr = 0;
 
 int main()
 {
@@ -65,7 +95,7 @@ int main()
 
     // array2d<int, 4, 4> arr;
     // arr(1, 1) = 0;
-    hashset<int, hash_i, cmp_i> hs(10);
+    /*hashset<int, hash_i, cmp_i> hs(10);
     std::vector<std::pair<std::shared_ptr<typename hashset<int, hash_i, cmp_i>::node>, bool>> p(4);
     {
         p.push_back(hs.get_node(5));
@@ -126,7 +156,8 @@ int main()
         output::print(p.back().second);
         output::endl();
         output::endl();
-    }
+    }*/
 
+    game g(-1);
     return 0;
 }
